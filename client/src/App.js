@@ -1,0 +1,91 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
+import "./App.css";
+
+const images = [
+  { img: "https://assets.atdw-online.com.au/images/9e612a3d635dd644f4fc4f9e236caec2.jpeg?rect=400%2C0%2C2400%2C1800&w=2048&h=1536&rot=360" },
+  { img: "https://res.cloudinary.com/cityofsydney/image/upload/f_auto/c_fill,h_960,w_2560/v1735344538/k7h9gk6i1z6d/rjKnZGeH8GcwFYtMMYXeO/a7293030-c4af-11ef-93b3-dd93c571ed88--XSWL--xi-o-s--w-le--hero.jpg" },
+  { img: "https://res.cloudinary.com/cityofsydney/image/upload/f_auto/c_fill,h_960,w_2560/v1741837364/k7h9gk6i1z6d/1iuYy9FQja1imbJVkv4eWj/31528c50-ffbd-11ef-9088-ff19286913fd--Bloom-hero.jpg" },
+  { img: "https://res.cloudinary.com/cityofsydney/image/upload/f_auto/c_fill,h_712,w_712/v1745801826/k7h9gk6i1z6d/jD32uzrlO4BjZqyapqnME/96899e61-23cb-11f0-a26f-49d262e7118c--Damulay-Ngurang-Mother-s-Day-tile.jpg" },
+  { img: "https://res.cloudinary.com/cityofsydney/image/upload/f_auto/c_fill,h_960,w_1200/v1715129059/k7h9gk6i1z6d/jD32uzrlO4BjZqyapqnME/8a419000-0cd3-11ef-afc4-fd383fd380b4--Damulay-Ngurang-Mothers-Day-Barangaroo004--1-.jpg" },
+  { img: "https://assets.atdw-online.com.au/images/997367b1829c1faaca6cb1e5bc35fea9.jpeg?rect=195%2C0%2C3111%2C2333&w=1600&h=1200&&rot=360" },
+  { img: "https://www.sydney.com/sites/sydney/files/styles/landscape_1200x675/public/2024-08/203836_Vivid_Sydney_2024_DNSW_DT.webp?h=f0fb51a5&itok=o2IECLOw" },
+];
+const App = () => {
+  const [events, setEvents] = useState([]);
+  const [search, setSearch] = useState("");
+
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/events");
+        setEvents(res.data.events);
+      } catch (err) {
+        console.error("Error fetching events:", err);
+      }
+    };
+
+    fetchEvents();
+    const interval = setInterval(fetchEvents, 60000); // Auto-refresh every 60 sec
+    return () => clearInterval(interval);
+  }, []);
+
+  const filteredEvents = events.filter((event) =>
+    event.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+
+  return (
+    <div className="container">
+      <h1 className="heading">Must-see Events</h1>
+      <input
+        type="text"
+        placeholder="Search events..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="search"
+      />
+
+      <div className="grid">
+        {filteredEvents.map((event, index) => (
+          <div className="card" key={index}>
+            <img className="card-img"src={images[index % images.length].img} alt={event.title} />
+              
+            <div className="card-body">
+              <h2 className="title">{event.title}</h2>
+              <p className="category">{event.category}</p>
+              <div className="info">
+                <span className="icon-text">
+                  <FaMapMarkerAlt className="icon" /> {event.location}
+                </span>
+                <span className="icon-text">
+                  <FaCalendarAlt className="icon" /> {event.time}
+                </span>
+              </div>
+              <button
+                  onClick={() => {
+                    const email = prompt("Enter your email to get tickets:");
+                    if (email && /\S+@\S+\.\S+/.test(email)) {
+                      // TODO: Send email to backend if needed
+                      window.location.href = "https://whatson.cityofsydney.nsw.gov.au/";
+                    } else {
+                      alert("Please enter a valid email address.");
+                    }
+                  }}
+                  className="ticket-button"
+                >
+                  GET TICKETS
+                </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      
+    </div>
+  );
+};
+
+export default App;
