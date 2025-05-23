@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
-const Otp = require('../models/Otp');
+const Otp = require('../models/otp');
 
 
 const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
