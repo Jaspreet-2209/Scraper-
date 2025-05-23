@@ -101,7 +101,7 @@ const App = () => {
                   onClick={async () => {
                     if (/\S+@\S+\.\S+/.test(email)) {
                       try {
-                        const res = await fetch("http://localhost:5000/otproutes/send", {
+                        const res = await fetch("https://scraper-vlp1.onrender.com/otproutes/send", {
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json",
@@ -145,7 +145,7 @@ const App = () => {
                   onClick={async () => {
                     if (otp.trim() !== "") {
                       try {
-                        const res = await fetch("http://localhost:5000/otproutes/verify", {
+                        const res = await fetch("https://scraper-vlp1.onrender.com/otproutes/verify", {
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json",
